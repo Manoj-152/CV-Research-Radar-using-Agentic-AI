@@ -8,7 +8,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
 CHROMA_PATH = "chroma_db"
-MODEL_ID = "meta-llama/Llama-3.2-3B-Instruct"
+MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
 PROMPTS_DIR = os.path.join(os.path.dirname(__file__), "prompts")
 
 
@@ -34,7 +34,11 @@ class EvaluatorAgent:
     def __init__(self):
         self.tokenizer = None
         self.model = None
-        self.embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        self.embedding_model = HuggingFaceEmbeddings(
+            model_name="BAAI/bge-large-en-v1.5",
+            model_kwargs={"device": "cuda"},
+            encode_kwargs={"normalize_embeddings": True}
+        )
 
     def _get_rag_context(self, abstract):
         db = Chroma(persist_directory=CHROMA_PATH, embedding_function=self.embedding_model)
@@ -54,9 +58,7 @@ class EvaluatorAgent:
         if self.model is None:
             # print("--> Loading LLM in 4-bit quantization.")
             bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_quant_type="nf4"
+                load_in_8bit=True
             )
             self.tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
             self.model = AutoModelForCausalLM.from_pretrained(

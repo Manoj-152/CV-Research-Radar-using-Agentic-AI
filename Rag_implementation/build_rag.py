@@ -20,8 +20,8 @@ def build_rag():
 
     print("2. Chunking Text:")
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size = 800, # 1500
-        chunk_overlap = 100,    # 300
+        chunk_size = 1600,
+        chunk_overlap = 300,
         length_function = len,
         is_separator_regex=False
     )
@@ -29,7 +29,11 @@ def build_rag():
     print(f"Split into {len(chunks)} chunks.")
 
     print("3. Embedding and saving using Chroma:")
-    embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")  # Change model and get it to cuda
+    embedding_model = HuggingFaceEmbeddings(
+        model_name="BAAI/bge-large-en-v1.5",
+        model_kwargs={"device": "cuda"},
+        encode_kwargs={"normalize_embeddings": True}
+    )
 
     # Saving the vector database
     db = Chroma.from_documents(

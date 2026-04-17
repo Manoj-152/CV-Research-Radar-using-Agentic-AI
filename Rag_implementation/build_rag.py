@@ -39,7 +39,8 @@ def build_rag():
     db = Chroma.from_documents(
         chunks,
         embedding_model,
-        persist_directory=CHROMA_PATH
+        persist_directory=CHROMA_PATH,
+        collection_metadata={"hnsw:space": "cosine"}
     )
 
     print(f'Database saved in {CHROMA_PATH} directory')

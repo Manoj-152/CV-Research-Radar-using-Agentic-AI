@@ -29,7 +29,7 @@ def test_database():
         results = db.similarity_search_with_score(query, k=3)
         for i, (content, score) in enumerate(results):
             print(f"--- Result {i+1} ---")
-            print(f"Distance Score (lower the better): {score:.4f}")
+            print(f"Cosine Distance (0=identical, 1=unrelated): {score:.4f}")
             print(f"Source file: {content.metadata.get('source', 'Unknown')}")
             print(f"Page Number: {content.metadata.get('page', 'Unknown')}")
             print(f"Text Chunk: {content.page_content}\n")
